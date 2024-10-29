@@ -1,10 +1,11 @@
-import React, { useState } from "react";
-import { useNavigate} from "react-router-dom";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { useSearch } from "../context/SearchContext";
 import Logo1 from "../assets/Logo1.png";
 import Navbar from "../components/Navbar";
 
 const Home: React.FC = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const { searchTerm, setSearchTerm } = useSearch();
   const navigate = useNavigate();
 
   const handleSearch = (e: React.FormEvent) => {
@@ -15,14 +16,11 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen  bg-gradient-to-b from-[#FFFFFF] to-[#B1CBFF]">
-      {/* Navbar */}
-      <Navbar/>
-
-      {/* Main Content */}
+    <div className="flex flex-col items-center min-h-screen bg-gradient-to-b from-[#FFFFFF] to-[#B1CBFF]">
+      <Navbar />
       <div className="flex flex-col items-center mt-32 w-full max-w-full text-center">
         <div className="flex justify-center mb-6">
-          <img src={Logo1} alt="Logo" className="h-15 w-auto"/>
+          <img src={Logo1} alt="Logo" className="h-15 w-auto" />
         </div>
         <form onSubmit={handleSearch} className="w-full px-4">
           <input

@@ -1,34 +1,42 @@
-import React, { useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+// Navbar.tsx
+import React from "react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useSearch } from "../context/SearchContext"; // Adjust the path as necessary
 import Logo from "../assets/Logo.png"; // Adjust the path as necessary
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaTimes } from "react-icons/fa";
 
 const Navbar: React.FC = () => {
   const location = useLocation();
-  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
+  const { searchTerm, setSearchTerm } = useSearch();
 
-  // Check if the current route is the search results route
   const isSearchResults = location.pathname.includes("/search");
 
-  const handleSearchInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setSearchQuery(event.target.value);
+  const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
   };
 
   const handleSearchSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log("Searching for:", searchQuery);
+    if (searchTerm) {
+      navigate(`/search`);
+    }
   };
 
+  const clearSearch = () => {
+    setSearchTerm("");
+  };
+
+  const handleNavigate=()=>{
+    navigate('/')
+  }
+
   return (
-    <nav className="w-full max-w-full p-4 md:px-32   flex items-center justify-between xs:gap-10 bg-white shadow-md fixed top-0 z-10">
-     
-      <div className="flex items-center ">
+    <nav className="w-full max-w-full p-4 md:px-32 flex items-center justify-between bg-white shadow-md fixed top-0 z-10">
+      <div className="flex items-center" onClick={handleNavigate}>
         <img src={Logo} alt="Logo" className="h-10 w-auto" />
       </div>
 
-      
       {isSearchResults ? (
         <form
           onSubmit={handleSearchSubmit}
@@ -39,12 +47,22 @@ const Navbar: React.FC = () => {
           </span>
           <input
             type="text"
-            value={searchQuery}
+            value={searchTerm}
             onChange={handleSearchInputChange}
-            placeholder="Search..."
-            className="w-full max-w-md p-2 pr-20 pl-9 text-black bg-[#FFFFFF] border border-blue-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Search by name"
+            className="w-full max-w-md p-2 pr-10 pl-10 text-black bg-[#FFFFFF] border border-blue-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            aria-label="Search input"
           />
-        
+          {searchTerm && (
+            <button
+              type="button"
+              onClick={clearSearch}
+              className="absolute right-3"
+              aria-label="Clear search"
+            >
+              <FaTimes className="text-gray-500" />
+            </button>
+          )}
         </form>
       ) : (
         <div className="hidden md:flex space-x-5 px-52 text-customBlack uppercase font-inter font-normal text-[14px]">
@@ -97,11 +115,16 @@ const Navbar: React.FC = () => {
       )}
 
       {/* Mobile Menu Button */}
-      {!isSearchResults &&(<div className="md:hidden flex items-center">
-        <button className="focus:outline-none text-black">☰</button>
-      </div>)}
+      {!isSearchResults && (
+        <div className="md:hidden flex items-center">
+          <button className="focus:outline-none text-black">☰</button>
+        </div>
+      )}
     </nav>
   );
 };
 
 export default Navbar;
+
+
+

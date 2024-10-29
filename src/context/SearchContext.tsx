@@ -1,12 +1,15 @@
 import React, { createContext, useContext, useState } from "react";
 
+// Define the context type
 interface SearchContextType {
   searchTerm: string;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
 }
 
+// Create the context
 const SearchContext = createContext<SearchContextType | undefined>(undefined);
 
+// Provider component
 export const SearchProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
@@ -19,6 +22,7 @@ export const SearchProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
+// Custom hook to use the search context
 export const useSearch = () => {
   const context = useContext(SearchContext);
   if (context === undefined) {

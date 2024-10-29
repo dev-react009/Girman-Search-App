@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useSearch } from "../context/SearchContext"; // Import the useSearch hook
 import Modal from "react-modal";
 import { Users } from "../utils/usersData"; // Import the user data
 import { User } from "../types/interfaces";
 import Navbar from "../components/Navbar"; // Import Navbar
 import userPic from "../assets/Rectangle 1.png";
 import { FaLocationDot, FaPhone } from "react-icons/fa6";
-
+import notFound from "../assets/notFound.png"
 const SearchResults: React.FC = () => {
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const query = searchParams.get("query") || "";
+  const { searchTerm } = useSearch(); // Access the searchTerm from context
 
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -18,21 +16,21 @@ const SearchResults: React.FC = () => {
   const [error] = useState<string | null>(null);
 
   useEffect(() => {
-    if (query.trim() === "") {
+    if (searchTerm.trim() === "") {
       setFilteredUsers([]);
       return;
     }
 
     const results = Users.filter(
       (user) =>
-        user.first_name.toLowerCase().includes(query.toLowerCase()) ||
-        user.last_name.toLowerCase().includes(query.toLowerCase()) ||
-        user.city.toLowerCase().includes(query.toLowerCase()) || // Allow searching by city
-        user.contact_number.includes(query) // Allow searching by contact number
+        user.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.city.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        user.contact_number.includes(searchTerm) 
     );
 
     setFilteredUsers(results);
-  }, [query]);
+  }, [searchTerm]);
 
   const openModal = (user: User) => {
     setSelectedUser(user);
@@ -50,7 +48,9 @@ const SearchResults: React.FC = () => {
       <div className="flex flex-col items-center mt-20 w-full max-w-6xl px-4">
         {error && <div className="text-red-600">{error}</div>}
         {filteredUsers.length === 0 && !error ? (
-          <div className="text-gray-600">No results found.</div>
+          <div className="flex items-center mt-12">
+            <img src={notFound} alt="User" className="w-55 h-55 mb-4" />
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredUsers.map((user, index) => (
@@ -63,14 +63,14 @@ const SearchResults: React.FC = () => {
                   <img
                     src={userPic}
                     alt="User"
-                    className="w- h-12 mb-4 rounded-full"
+                    className="h-12 mb-4 rounded-full"
                   />
                 </div>
                 <div className="flex items-start font-inter">
                   <h3 className="text-lg font-bold text-black">{`${user.first_name} ${user.last_name}`}</h3>
                 </div>
                 <div className="flex items-start">
-                  <div className=" flex items-center gap-1 text-xs text-phoneTextBalck">
+                  <div className="flex items-center gap-1 text-xs text-phoneTextBalck">
                     <span>
                       <FaLocationDot />
                     </span>
@@ -90,7 +90,7 @@ const SearchResults: React.FC = () => {
                       </div>
                     </div>
                     <div
-                      className=" flex items-start text-xs font-inter"
+                      className="flex items-start text-xs font-inter"
                       style={{ color: "#AFAFAF" }}
                     >
                       {"Available on phone"}
@@ -147,7 +147,9 @@ const SearchResults: React.FC = () => {
               </div>
             </div>
           ) : (
-            <p>No Details Found</p>
+            <div>
+              <img src={notFound} alt="User" className="w-24 h-24 mb-4" />
+            </div>
           )}
           <div className="close-button">
             <button
