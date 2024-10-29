@@ -10,7 +10,9 @@ export default {
         inter: ['Inter', 'sans-serif'], 
       },
       colors: {
-        customBlack: '#111111', 
+        customBlack: '#111111',
+        buttonBlack:"#18181B" ,
+        phoneTextBalck:"#425763",
       },
     },
   },
